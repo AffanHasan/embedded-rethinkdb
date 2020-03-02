@@ -31,4 +31,5 @@ Here are some ways for you to get involved:
 If you want to contribute code this way, please familiarize yourself with the process outlined for contributing to projects here: [Contributor Guidelines](http://git.etilizepak.com/automation/sde/wikis/Contributor-Guidelines).
 
 # Contact to development team
-ahasan@etilizepak.com
+afhasan@etilizepak.com
+affanhasan88@gmail.com

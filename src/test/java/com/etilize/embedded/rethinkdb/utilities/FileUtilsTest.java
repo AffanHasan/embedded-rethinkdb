@@ -26,50 +26,57 @@
  * #endregion
  */
 
-package com.etilize.embedded.rethinkdb;
+package com.etilize.embedded.rethinkdb.utilities;
 
-import static org.mockito.Mockito.*;
+import static com.etilize.embedded.rethinkdb.utilities.FileUtils.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.*;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.rules.TemporaryFolder;
 
-import com.etilize.embedded.rethinkdb.utilities.FileUtils;
 import com.etilize.test.AbstractTest;
 
-import io.apisense.embed.influx.ServerAlreadyRunningException;
-
 /**
- * Contains functional tests for {@link EmbeddedDB}
+ * Functional tests for {@link FileUtils}
  *
  * @author Affan Hasan
  */
-public class EmbeddedDbTest extends AbstractTest {
-	
-	private EmbeddedRethinkDbServer embeddedDb;
-	
-	@Mock
-	private FileUtils fileUtils;
-	
-	@Before
-	public void init() {
-		embeddedDb = new EmbeddedRethinkDbServer(fileUtils);
-	}
-	
-    @Test
-    public void shouldCheckIfHomeDirectoryContainsCorrectVersionBinaries() throws IOException, ServerAlreadyRunningException {
-    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
-    	embeddedDb.init();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
+public class FileUtilsTest extends AbstractTest {
+
+    private String releaseFolderPath;
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder(new File(USER_HOME));
+
+    private FileUtils fileUtils;
+
+    @Before
+    public void init() throws IOException {
+        final String rootFolderPath;
+        rootFolderPath = tempFolder.getRoot() //
+                .getAbsolutePath();
+        releaseFolderPath = tempFolder.newFolder(
+                getRethinkDbFolderName(RETHINK_DB_VERSION), RELEASE_FOLDER_NAME) //
+                .getAbsolutePath();
+        fileUtils = new FileUtils(rootFolderPath, RETHINK_DB_VERSION);
     }
-    
+
     @Test
-    public void shouldDownloadBinariesForCorrectDbVersionWhenDoesNotExists() throws IOException, ServerAlreadyRunningException {
-    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.FALSE);
-    	embeddedDb.init();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
-    	// TODO: add further test logic
+    public void shouldReturnTrueWhenDatabaseBinaryExists() throws IOException {
+        org.apache.commons.io.FileUtils.touch(new File(
+                FilenameUtils.concat(releaseFolderPath, RETHINK_DB_BINARY_FILE_NAME)));
+        assertThat(fileUtils.isDbBinaryFileExists(), is(true));
+    }
+
+    @Test
+    public void shouldReturnFalseWhenDatabaseBinaryDonotExists() throws IOException {
+        assertThat(fileUtils.isDbBinaryFileExists(), is(false));
     }
 }
