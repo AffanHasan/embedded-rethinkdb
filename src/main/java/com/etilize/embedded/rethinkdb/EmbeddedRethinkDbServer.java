@@ -54,8 +54,7 @@ public class EmbeddedRethinkDbServer implements EmbeddedDB {
     public void init() throws ServerAlreadyRunningException, IOException {
         if (!fileUtils.isDbBinaryFileExists()) {
         	fileUtils.downloadDbArchive();
-//        	fileUtils.deleteDbDirectoryForVersionIfExists(RETHINK_DB_VERSION);
-//        	fileUtils.extractDbArchiveForVersion(RETHINK_DB_VERSION);
+        	fileUtils.expandDbArchive();
         }
     }
 

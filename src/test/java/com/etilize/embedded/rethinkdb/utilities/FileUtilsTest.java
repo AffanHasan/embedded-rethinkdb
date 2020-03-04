@@ -28,11 +28,10 @@
 
 package com.etilize.embedded.rethinkdb.utilities;
 
-import static com.etilize.embedded.rethinkdb.utilities.CommonUtils.*;
 import static com.etilize.embedded.rethinkdb.EmbeddedRethinkDbServer.*;
+import static com.etilize.embedded.rethinkdb.utilities.CommonUtils.*;
 import static com.etilize.embedded.rethinkdb.utilities.FileUtils.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +44,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.etilize.test.AbstractTest;
+
+import static org.hamcrest.MatcherAssert.*;
 
 /**
  * Functional tests for {@link FileUtils}
@@ -94,5 +95,16 @@ public class FileUtilsTest extends AbstractTest {
     	fileUtils.downloadDbArchive();
     	org.apache.commons.io.FileUtils.directoryContains(
                 new File(userHomeDirectory), new File(getVersionSpecificRethinkDbArchiveFileName(RETHINK_DB_VERSION)));
+    }
+    
+    /**
+     * This test is ignored since it is very time taking
+     * 
+     * @throws IOException
+     */
+    @Test
+    @Ignore
+    public void shouldExtractRethinkDbArchive() throws IOException{
+    	fileUtils.expandDbArchive();
     }
 }

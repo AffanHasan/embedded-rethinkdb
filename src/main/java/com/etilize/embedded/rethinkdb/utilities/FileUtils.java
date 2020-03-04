@@ -30,9 +30,19 @@ package com.etilize.embedded.rethinkdb.utilities;
 
 import static com.etilize.embedded.rethinkdb.utilities.CommonUtils.*;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -68,7 +78,7 @@ public class FileUtils {
      * Checks if rethinkdb binary file exists or not.
      *
      * @return {@link Boolean}
-     * @throws IOException
+     * @throws IOException IOException
      */
     public boolean isDbBinaryFileExists() throws IOException {
         final String rethinkDbFolderPath = FilenameUtils.concat(rootFolderPath,
@@ -89,5 +99,42 @@ public class FileUtils {
     public void downloadDbArchive() throws IOException {
     	org.apache.commons.io.FileUtils.copyURLToFile(getVersionSpecificDownloadArchiveURL(databaseVersion), 
     			new File(FilenameUtils.concat(rootFolderPath, getVersionSpecificRethinkDbArchiveFileName(databaseVersion))), 10000, 10000);
+    }
+    
+    /**
+     * Expands ".tgz" rethinkdb archive file
+     * 
+     * @throws IOException IOException 
+     */
+    public void expandDbArchive() throws IOException {
+    	final File targetDir = new File(rootFolderPath);
+		try (final InputStream fi = Files.newInputStream(Paths.get(FilenameUtils.concat(rootFolderPath, 
+				getVersionSpecificRethinkDbArchiveFileName(databaseVersion))));
+			     final InputStream bi = new BufferedInputStream(fi);
+			     final InputStream gzi = new GzipCompressorInputStream(bi);
+			     final ArchiveInputStream i = new TarArchiveInputStream(gzi)) {
+		    ArchiveEntry entry = null;
+		    while ((entry = i.getNextEntry()) != null) {
+		        if (!i.canReadEntryData(entry)) {
+		            // log something?
+		            continue;
+		        }
+		        final String name = FilenameUtils.concat(targetDir.getCanonicalPath(), entry.getName());
+		        final File f = new File(name);
+		        if (entry.isDirectory()) {
+		            if (!f.isDirectory() && !f.mkdirs()) {
+		                throw new IOException("failed to create directory " + f);
+		            }
+		        } else {
+		            final File parent = f.getParentFile();
+		            if (!parent.isDirectory() && !parent.mkdirs()) {
+		                throw new IOException("failed to create directory " + parent);
+		            }
+		            try (final OutputStream o = Files.newOutputStream(f.toPath())) {
+		                IOUtils.copy(i, o);
+		            }
+		        }
+		    }
+		}
     }
 }

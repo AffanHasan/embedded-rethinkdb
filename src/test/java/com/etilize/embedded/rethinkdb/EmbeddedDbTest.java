@@ -71,7 +71,8 @@ public class EmbeddedDbTest extends AbstractTest {
     	embeddedDb.init();
     	verify(fileUtils, times(1)).isDbBinaryFileExists();
     	verify(fileUtils, times(1)).downloadDbArchive();
-//    	verify(fileUtils, times(1)).extractDbArchive();
+    	verify(fileUtils, times(1)).expandDbArchive();
+//    	verify(fileUtils, times(1)).buildRethinkDb();
     }
     
     @Test
@@ -79,9 +80,8 @@ public class EmbeddedDbTest extends AbstractTest {
     	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
     	embeddedDb.init();
     	verify(fileUtils, times(1)).isDbBinaryFileExists();
-//    	verify(fileUtils, never()).deleteDbArchiveIfExists();
-//    	verify(fileUtils, never()).downloadDbArchive();
-//    	verify(fileUtils, never()).deleteDbDirectoryIfExists();
-//    	verify(fileUtils, never()).extractDbArchive();
+    	verify(fileUtils, times(1)).isDbBinaryFileExists();
+    	verify(fileUtils, times(1)).downloadDbArchive();
+    	verify(fileUtils, times(1)).expandDbArchive();
     }
 }
