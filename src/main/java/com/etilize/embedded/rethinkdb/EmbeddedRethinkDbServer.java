@@ -41,6 +41,8 @@ import io.apisense.embed.influx.ServerNotRunningException;
  * @author Affan Hasan
  */
 public class EmbeddedRethinkDbServer implements EmbeddedDB {
+	
+	public static final String RETHINK_DB_VERSION = "2.4.0";
 
     private final FileUtils fileUtils;
     
@@ -51,9 +53,10 @@ public class EmbeddedRethinkDbServer implements EmbeddedDB {
     @Override
     public void init() throws ServerAlreadyRunningException, IOException {
         if (!fileUtils.isDbBinaryFileExists()) {
-            // TODO: If not then download to /home/user the sources
+        	fileUtils.downloadDbArchive();
+//        	fileUtils.deleteDbDirectoryForVersionIfExists(RETHINK_DB_VERSION);
+//        	fileUtils.extractDbArchiveForVersion(RETHINK_DB_VERSION);
         }
-        // TODO: extract the sources
     }
 
     @Override

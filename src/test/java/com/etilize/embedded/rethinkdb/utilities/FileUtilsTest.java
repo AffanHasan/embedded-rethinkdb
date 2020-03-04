@@ -28,6 +28,8 @@
 
 package com.etilize.embedded.rethinkdb.utilities;
 
+import static com.etilize.embedded.rethinkdb.utilities.CommonUtils.*;
+import static com.etilize.embedded.rethinkdb.EmbeddedRethinkDbServer.*;
 import static com.etilize.embedded.rethinkdb.utilities.FileUtils.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
@@ -37,6 +39,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -56,16 +59,16 @@ public class FileUtilsTest extends AbstractTest {
     public TemporaryFolder tempFolder = new TemporaryFolder(new File(USER_HOME));
 
     private FileUtils fileUtils;
+    private String userHomeDirectory;
 
     @Before
     public void init() throws IOException {
-        final String rootFolderPath;
-        rootFolderPath = tempFolder.getRoot() //
+        userHomeDirectory = tempFolder.getRoot() //
                 .getAbsolutePath();
         releaseFolderPath = tempFolder.newFolder(
                 getRethinkDbFolderName(RETHINK_DB_VERSION), RELEASE_FOLDER_NAME) //
                 .getAbsolutePath();
-        fileUtils = new FileUtils(rootFolderPath, RETHINK_DB_VERSION);
+        fileUtils = new FileUtils(userHomeDirectory, RETHINK_DB_VERSION);
     }
 
     @Test
@@ -78,5 +81,18 @@ public class FileUtilsTest extends AbstractTest {
     @Test
     public void shouldReturnFalseWhenDatabaseBinaryDonotExists() throws IOException {
         assertThat(fileUtils.isDbBinaryFileExists(), is(false));
+    }
+    
+    /**
+     * This test is ignored since it is very time taking
+     * 
+     * @throws IOException
+     */
+    @Test
+    @Ignore
+    public void shouldDownloadDbArchive() throws IOException {
+    	fileUtils.downloadDbArchive();
+    	org.apache.commons.io.FileUtils.directoryContains(
+                new File(userHomeDirectory), new File(getVersionSpecificRethinkDbArchiveFileName(RETHINK_DB_VERSION)));
     }
 }

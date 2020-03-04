@@ -28,6 +28,8 @@
 
 package com.etilize.embedded.rethinkdb.utilities;
 
+import static com.etilize.embedded.rethinkdb.utilities.CommonUtils.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -41,9 +43,7 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class FileUtils {
 
-    public static final String RETHINK_DB_VERSION = "2.4.0";
-
-    public static final String USER_HOME = System.getProperty("user.home");
+    public static final String USER_HOME = org.apache.commons.io.FileUtils.getUserDirectoryPath();
 
     public static final String RETHINK_DB_BINARY_FILE_NAME = "rethinkdb";
 
@@ -80,9 +80,14 @@ public class FileUtils {
         return org.apache.commons.io.FileUtils.directoryContains(
                 new File(releaseFolderPath), new File(rethinkDbBinaryFilePath));
     }
-
-    public static String getRethinkDbFolderName(final String version) {
-        return "rethinkdb-" + version;
+    
+    /**
+     * Download rethinkdb archive file, it rewrites the archive file if already exists.
+     * 
+     * @throws IOException @{@link IOException}
+     */
+    public void downloadDbArchive() throws IOException {
+    	org.apache.commons.io.FileUtils.copyURLToFile(getVersionSpecificDownloadArchiveURL(databaseVersion), 
+    			new File(FilenameUtils.concat(rootFolderPath, getVersionSpecificRethinkDbArchiveFileName(databaseVersion))), 10000, 10000);
     }
-
 }

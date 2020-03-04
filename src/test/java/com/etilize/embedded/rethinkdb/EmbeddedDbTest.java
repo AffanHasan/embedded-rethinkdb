@@ -70,6 +70,18 @@ public class EmbeddedDbTest extends AbstractTest {
     	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.FALSE);
     	embeddedDb.init();
     	verify(fileUtils, times(1)).isDbBinaryFileExists();
-    	// TODO: add further test logic
+    	verify(fileUtils, times(1)).downloadDbArchive();
+//    	verify(fileUtils, times(1)).extractDbArchive();
+    }
+    
+    @Test
+    public void shouldNotDownloadBinariesWhenExistsAlready() throws IOException, ServerAlreadyRunningException {
+    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
+    	embeddedDb.init();
+    	verify(fileUtils, times(1)).isDbBinaryFileExists();
+//    	verify(fileUtils, never()).deleteDbArchiveIfExists();
+//    	verify(fileUtils, never()).downloadDbArchive();
+//    	verify(fileUtils, never()).deleteDbDirectoryIfExists();
+//    	verify(fileUtils, never()).extractDbArchive();
     }
 }
