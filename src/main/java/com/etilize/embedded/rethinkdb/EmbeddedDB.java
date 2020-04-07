@@ -42,12 +42,12 @@ import io.apisense.embed.influx.ServerNotRunningException;
 public interface EmbeddedDB {
 
     /**
-     * Check if the se+rver binaries are present locally
+     * Check if the server binaries are present locally
      * and install them if missing.
      *
      * @throws ServerAlreadyRunningException If the server is already started.
      */
-    void init() throws ServerAlreadyRunningException, IOException;
+    void init() throws ServerAlreadyRunningException, IOException, InterruptedException;
 
     /**
      * Start the server if not already running.

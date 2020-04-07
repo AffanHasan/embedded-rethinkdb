@@ -60,6 +60,7 @@ public class FileUtilsTest extends AbstractTest {
     public TemporaryFolder tempFolder = new TemporaryFolder(new File(USER_HOME));
 
     private FileUtils fileUtils;
+
     private String userHomeDirectory;
 
     @Before
@@ -83,28 +84,43 @@ public class FileUtilsTest extends AbstractTest {
     public void shouldReturnFalseWhenDatabaseBinaryDonotExists() throws IOException {
         assertThat(fileUtils.isDbBinaryFileExists(), is(false));
     }
-    
+
     /**
      * This test is ignored since it is very time taking
-     * 
+     *
      * @throws IOException
      */
     @Test
     @Ignore
     public void shouldDownloadDbArchive() throws IOException {
-    	fileUtils.downloadDbArchive();
-    	org.apache.commons.io.FileUtils.directoryContains(
-                new File(userHomeDirectory), new File(getVersionSpecificRethinkDbArchiveFileName(RETHINK_DB_VERSION)));
+        fileUtils.downloadDbArchive();
+        org.apache.commons.io.FileUtils.directoryContains(new File(userHomeDirectory),
+                new File(getVersionSpecificRethinkDbArchiveFileName(RETHINK_DB_VERSION)));
     }
-    
+
     /**
      * This test is ignored since it is very time taking
-     * 
+     *
      * @throws IOException
+     * @throws InterruptedException
      */
     @Test
     @Ignore
-    public void shouldExtractRethinkDbArchive() throws IOException{
-    	fileUtils.expandDbArchive();
+    public void shouldExtractRethinkDbArchive() throws IOException, InterruptedException {
+        fileUtils = new FileUtils(userHomeDirectory, RETHINK_DB_VERSION);
+        fileUtils.expandDbArchive();
+    }
+
+    /**
+     * This test is ignored since it is very time taking
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    @Test
+    @Ignore
+    public void shouldBuildRethinkDbBinaries() throws IOException, InterruptedException {
+        fileUtils = new FileUtils(userHomeDirectory, RETHINK_DB_VERSION);
+        fileUtils.buildBinaries();
     }
 }

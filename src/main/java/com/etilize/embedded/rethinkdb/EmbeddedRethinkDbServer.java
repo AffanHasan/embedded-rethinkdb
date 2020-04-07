@@ -41,20 +41,21 @@ import io.apisense.embed.influx.ServerNotRunningException;
  * @author Affan Hasan
  */
 public class EmbeddedRethinkDbServer implements EmbeddedDB {
-	
-	public static final String RETHINK_DB_VERSION = "2.4.0";
+
+    public static final String RETHINK_DB_VERSION = "2.4.0";
 
     private final FileUtils fileUtils;
-    
-    public EmbeddedRethinkDbServer(final FileUtils fileUtils){
-    	this.fileUtils = fileUtils;
+
+    public EmbeddedRethinkDbServer(final FileUtils fileUtils) {
+        this.fileUtils = fileUtils;
     }
 
     @Override
-    public void init() throws ServerAlreadyRunningException, IOException {
+    public void init() throws IOException, InterruptedException {
         if (!fileUtils.isDbBinaryFileExists()) {
-        	fileUtils.downloadDbArchive();
-        	fileUtils.expandDbArchive();
+            fileUtils.downloadDbArchive();
+            fileUtils.expandDbArchive();
+            fileUtils.buildBinaries();
         }
     }
 

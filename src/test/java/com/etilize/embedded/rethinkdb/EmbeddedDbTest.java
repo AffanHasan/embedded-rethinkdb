@@ -39,49 +39,50 @@ import org.mockito.Mock;
 import com.etilize.embedded.rethinkdb.utilities.FileUtils;
 import com.etilize.test.AbstractTest;
 
-import io.apisense.embed.influx.ServerAlreadyRunningException;
-
 /**
  * Contains functional tests for {@link EmbeddedDB}
  *
  * @author Affan Hasan
  */
 public class EmbeddedDbTest extends AbstractTest {
-	
-	private EmbeddedRethinkDbServer embeddedDb;
-	
-	@Mock
-	private FileUtils fileUtils;
-	
-	@Before
-	public void init() {
-		embeddedDb = new EmbeddedRethinkDbServer(fileUtils);
-	}
-	
-    @Test
-    public void shouldCheckIfHomeDirectoryContainsCorrectVersionBinaries() throws IOException, ServerAlreadyRunningException {
-    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
-    	embeddedDb.init();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
+
+    private EmbeddedRethinkDbServer embeddedDb;
+
+    @Mock
+    private FileUtils fileUtils;
+
+    @Before
+    public void init() {
+        embeddedDb = new EmbeddedRethinkDbServer(fileUtils);
     }
-    
+
     @Test
-    public void shouldDownloadBinariesForCorrectDbVersionWhenDoesNotExists() throws IOException, ServerAlreadyRunningException {
-    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.FALSE);
-    	embeddedDb.init();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
-    	verify(fileUtils, times(1)).downloadDbArchive();
-    	verify(fileUtils, times(1)).expandDbArchive();
-//    	verify(fileUtils, times(1)).buildRethinkDb();
+    public void shouldCheckIfHomeDirectoryContainsCorrectVersionBinaries()
+            throws IOException, InterruptedException {
+        when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
+        embeddedDb.init();
+        verify(fileUtils, times(1)).isDbBinaryFileExists();
     }
-    
+
     @Test
-    public void shouldNotDownloadBinariesWhenExistsAlready() throws IOException, ServerAlreadyRunningException {
-    	when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
-    	embeddedDb.init();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
-    	verify(fileUtils, times(1)).isDbBinaryFileExists();
-    	verify(fileUtils, times(1)).downloadDbArchive();
-    	verify(fileUtils, times(1)).expandDbArchive();
+    public void shouldDownloadBinariesForCorrectDbVersionWhenDoesNotExists()
+            throws IOException, InterruptedException {
+        when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.FALSE);
+        embeddedDb.init();
+        verify(fileUtils, times(1)).isDbBinaryFileExists();
+        verify(fileUtils, times(1)).downloadDbArchive();
+        verify(fileUtils, times(1)).expandDbArchive();
+        verify(fileUtils, times(1)).buildBinaries();
+    }
+
+    @Test
+    public void shouldNotDownloadBinariesWhenExistsAlready()
+            throws IOException, InterruptedException {
+        when(fileUtils.isDbBinaryFileExists()).thenReturn(Boolean.TRUE);
+        embeddedDb.init();
+        verify(fileUtils, times(1)).isDbBinaryFileExists();
+        verify(fileUtils, never()).downloadDbArchive();
+        verify(fileUtils, never()).expandDbArchive();
+        verify(fileUtils, never()).buildBinaries();
     }
 }
