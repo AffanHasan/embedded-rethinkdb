@@ -373,7 +373,7 @@
                     <dependency>
                         <groupId>net.minidev</groupId>
                         <artifactId>json-smart</artifactId>
-                        <version>2.2</version>
+                        <version>2.4.5</version>
                     </dependency>
                     <!-- citrus-core needs version 2.0.0 and spring needs
                         0.9.1 -->
